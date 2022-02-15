@@ -1,0 +1,244 @@
+#:kivy 2.0.0
+
+<Telamenus>
+    Menu:
+        name: 'menu'
+    Menucliente:
+        name: 'menucliente'
+    Menupeca:
+        name: 'menupeca'
+    Cadastrocliente:
+        name: 'cadastrocliente'
+    Cadastropeca:
+        name: 'cadastropeca'
+    Escolherfoto:
+        name: 'escolherfoto'
+
+
+# <-----------------------MENU PRINCIPAL------------------------------>
+<Menu>
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 5
+#        canvas:
+#            Color:
+#                rgba: 1,1,1,1
+#            Rectangle:
+#                size: self.size
+#                pos: self.pos
+#                source: 'imagens/fundo.jpg'
+
+        Image:
+            source: 'imagens/helpdecor.png'
+            size_hint_y: None
+            height: 100
+            allow_stretch: True
+        Botao:
+            text: 'Clientes'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'menucliente'
+        Botao:
+            text: 'Festas'
+            size_hint_y: None
+            height: 60
+        Botao:
+            text: 'Peças de decoração'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'menupeca'
+        Botao:
+            text: 'Fornecedores'
+            size_hint_y: None
+            height: 60
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            Botao:
+                text: 'Fechar'
+                size_hint_y: None
+                height: 40
+                on_release: app.stop()
+                cor: 0.8,0.6,0.7,1
+            Image:
+                source: 'imagens/logo5.jpeg'
+                size_hint_y: None
+                height: 40
+                allow_stretch: True
+            Label:
+                text: 'V1.0.1'
+                size_hint_y: None
+                height: 40
+                color: 'green'
+
+
+
+# <-----------------------MENU DE CLIENTES------------------------------>
+<Menucliente>
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 5
+        Botao:
+            text: 'Cadastrar Cliente'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'cadastrocliente'
+        Botao:
+            text: 'Voltar'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'menu'
+
+
+# <-----------------------MENU DE PEÇAS------------------------------>
+<Menupeca>
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 5
+        Botao:
+            text: 'Cadastrar Peças'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'cadastropeca'
+        Botao:
+            text: 'Voltar'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'menu'
+
+
+# <-----------------------TELA DE CADASTRO CLIENTES------------------------------>
+<Cadastrocliente>
+    BoxLayout:
+        orientation: 'vertical'
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title: 'Cadastro de Clientes'
+                    on_release: app.root.current = 'menucliente'
+        ScrollView:
+            BoxLayout:
+                id: boxcadcliente
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            TextInput:
+                id: cadastrocli
+            Button:
+                text: '+'
+                size_hint_x: None
+                weight: 30
+                on_release: root.adicionarcliente()
+
+
+# <-----------------------TELA DE CADASTRO PEÇAS------------------------------>
+<Cadastropeca>
+    BoxLayout:
+        orientation: 'vertical'
+        ActionBar:
+            ActionView:
+                ActionPrevious:
+                    title: 'Cadastro de Peças'
+                    on_release: app.root.current = 'menupeca'
+        ScrollView:
+            BoxLayout:
+                id: boxcadpeca
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            Button:
+                text: 'Inserir Imagem'
+                font_size: 10
+                size_hint_x: None
+                weight: 30
+                on_release: app.root.current = 'escolherfoto'
+            TextInput:
+                id: cadastropec
+            Button:
+                text: '+'
+                size_hint_x: None
+                weight: 30
+                on_release: root.adicionarpeca()
+
+
+# <-----------------------WIDGET COM O CADASTRO DO CLIENTE------------------------------>
+<AddCadCliente>
+    size_hint_y: None
+    height: 60
+    Label:
+        id: rotulocadcliente
+    Button:
+        text: 'x'
+        size_hint_x: None
+        weight: 30
+        on_release:app.root.get_screen('cadastrocliente').removerCadastro(root)
+
+
+# <-----------------------WIDGET COM O CADASTRO DA PEÇA------------------------------>
+<AddCadPeca>
+    size_hint_y: None
+    height: 60
+    Image:
+        size_hint_x: None
+        size_hint_y: None
+        weight: 2
+        height: 50
+        id: imagem_carregada
+        source: ''
+    Label:
+        id: rotulocadpeca
+    Button:
+        text: 'x'
+        size_hint_x: None
+        weight: 30
+        on_release:app.root.get_screen('cadastropeca').removerCadastro(root)
+
+# <-----------------------TELA DE SELEÇÃO DE IMAGEM DAS PEÇAS------------------------------>
+<Escolherfoto>
+
+    BoxLayout:
+        orientation: 'vertical'
+        id: my_foto
+
+        FileChooserIconView:
+            id: filechooser
+            on_selection: root.selecionar(filechooser.selection)
+        Image:
+            id: imagempeca
+            source: ''
+        Button:
+            id: botaook
+            text: 'Escolher'
+            size_hint_x: None
+            size_hint_x: None
+            weight: 30
+            height: 30
+            on_release: app.root.current = 'cadastropeca'
+
+
+
+# ------> Customização de Botão Via KvLanguage
+#<Botao@ButtonBehavior+Label>
+#    canvas.before:
+#        Color:
+#            rgba:0.8,0.2,0.7,1
+#        Ellipse:
+#            pos: self.pos
+#            size: self.height, self.height
+#        Ellipse:
+#            pos: self.x+self.width-self.height, self.y
+#            size: self.height, self.height
+#        Rectangle:
+#            pos: self.x+self.height/2.0, self.y
+#            size: self.width-self.height, self.height
