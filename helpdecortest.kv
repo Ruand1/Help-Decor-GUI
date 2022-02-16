@@ -1,4 +1,5 @@
 #:kivy 2.0.0
+#:import platform kivy.utils.platform
 
 <Telamenus>
     Menu:
@@ -13,6 +14,8 @@
         name: 'cadastropeca'
     Escolherfoto:
         name: 'escolherfoto'
+#    Locacao:
+#        name: 'locacao'
 
 
 # <-----------------------MENU PRINCIPAL------------------------------>
@@ -212,6 +215,7 @@
         id: my_foto
 
         FileChooserIconView:
+            rootpath: '/storage/emulated/0/' if platform == 'android' else '/'
             id: filechooser
             on_selection: root.selecionar(filechooser.selection)
         Image:

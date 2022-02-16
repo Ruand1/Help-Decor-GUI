@@ -10,40 +10,13 @@ from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.graphics import Color, Ellipse, Rectangle
 from kivy.properties import ListProperty, ObjectProperty
 from os import path
-from PIL import Image, ImageEnhance
+#from android.permissions request_permissions, Permission  # PARA RODAR NO DESKTOP COMENTAR ESTA LINHA
 import kivy
 kivy.require('2.0.0')
 
 
 class Telamenus(ScreenManager):  #<---- Gerenciador das Telas
     pass
-
-
-"""class Editor():
-    img = None  #  Variável para armazenar foto escolhida pelo usuário
-    img_formato = None  #  Variável armazena formato da imagem
-    img_local = None  #  Variável para armazenar local da imagem
-    img_nome = None  #  Variável para armazenar nome da imagem
-    img_ext = None  #  Variável para armazenar extensão da imagem
-
-    def resetar(self):
-        self.img = None
-        self.img_formato = None
-        self.img_local = None
-        self.img_nome = None
-        self.img_ext = None
-
-    def carregar_imagem(self, imagem):
-        try:
-            self.img = Image.open(imagem)
-            self.img_formato = self.img.format
-            self.img_local = path.dirname(path.realpath(imagem))
-            self.img_nome, self.img_ext = path.splitext(path.basename(imagem))
-            print('Imagem carregada...')
-            return True
-        except:
-            print('Falha ao carregar imagem...')
-            return False"""
 
 
 class Menu(Screen):  #<---- Tela de Menus Geral
@@ -250,6 +223,8 @@ class Escolherfoto(Screen):
 # NO RETORNO ESTA DUPLICANDO CADASTRO - FOI COLOCADO NO ON_PRE_LEAVE A REMOÇÃO DOS WIDGETS
 # PARTE DE CADASTRO DE PEÇAS FOI FINALIZADO - VERIFICAR ERROS E MELHORAMENTOS
 # ------------------------------------------------------------------------------
+# PROBLEMAS NAS PERMISSOES DO ANDROID PARA ACESSAR STORAGE
+
 # COMEÇAR PARTE DE GERAR RELATORIO DE LOCAÇÃO
 
 # FAZER CADASTRO DE CLIENTES - MELHORIA
@@ -292,7 +267,8 @@ class Botao(ButtonBehavior, Label):
 class HelpDecorTest(App):
     def build(self):
         return Telamenus()
-
+#    def on_start(self):  # PARA RODAR NO DESKTOP COMENTAR ESTA LINHA
+#        request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 HelpDecorTest().run()
 
