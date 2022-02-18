@@ -1,4 +1,5 @@
 #:kivy 2.0.0
+#:import platform kivy.utils.platform
 
 <Telamenus>
     Menu:
@@ -13,6 +14,8 @@
         name: 'cadastropeca'
     Escolherfoto:
         name: 'escolherfoto'
+#    Locacao:
+#        name: 'locacao'
 
 
 # <-----------------------MENU PRINCIPAL------------------------------>
@@ -154,6 +157,30 @@
                 size_hint_y: None
                 height: self.minimum_height
 
+# TITULO DO FORMULARIO DE CADASTRO DE PEÇAS
+        BoxLayout:
+            size_hint_y: None
+            height:30
+            Label:
+                text: 'Imagem'
+                font_size: 10
+                size_hint_x: None
+                weight: 30
+            Label:
+                text: 'Descrição'
+                font_size: 10
+            Label
+                text: 'Quantidade'
+                font_size: 10
+                size_hint_x: None
+                weight: 10
+            Label:
+                text: 'Adicionar'
+                font_size: 10
+                size_hint_x: None
+                weight: 30
+
+#FORMULARIO DE CADASTRO DE PEÇAS
         BoxLayout:
             size_hint_y: None
             height: 60
@@ -165,6 +192,10 @@
                 on_release: app.root.current = 'escolherfoto'
             TextInput:
                 id: cadastropec
+            TextInput:
+                id: quantidadepec
+                size_hint_x: None
+                weight: 10
             Button:
                 text: '+'
                 size_hint_x: None
@@ -189,19 +220,47 @@
 <AddCadPeca>
     size_hint_y: None
     height: 60
-    Image:
-        size_hint_x: None
-        size_hint_y: None
-        weight: 2
-        height: 50
-        id: imagem_carregada
-        source: ''
+    BoxLayout:
+        orientation: 'vertical'
+        id: mudarposicao
+#        size_hint: 0.1, 1
+#        weight: self.minimum_weight
+        spacing: 0
+        Button:
+            id: bsobeposicao
+            text: '^'
+            size_hint: 0.10, 1
+            on_release: app.root.get_screen('cadastropeca').sobeposicao()
+        Button:
+            id: desceposicao
+            text: 'v'
+            size_hint: 0.10, 1
+    Label:
+        id: uniquepeca
+        spacing: 0
+
+# BOTÃO PARA POPUP DA IMAGEM DA PEÇA
+    Button:
+        background_normal: ''
+        border: 0,0,0,0
+        id: imagem_popup
+        size_hint: 0.15, 1
+#        pos: 100, 100
+        on_release: root.aumentarfoto()
+        spacing: 0
     Label:
         id: rotulocadpeca
+        spacing: 0
+    Label:
+        id: rotuloqtdpeca
+        size_hint_x: None
+        weight: 30
+        spacing: 0
     Button:
         text: 'x'
         size_hint_x: None
         weight: 30
+        size_hint: 0.15, 1
         on_release:app.root.get_screen('cadastropeca').removerCadastro(root)
 
 # <-----------------------TELA DE SELEÇÃO DE IMAGEM DAS PEÇAS------------------------------>
@@ -212,6 +271,7 @@
         id: my_foto
 
         FileChooserIconView:
+            rootpath: '/storage/emulated/0/' if platform == 'android' else '/'
             id: filechooser
             on_selection: root.selecionar(filechooser.selection)
         Image:
@@ -221,7 +281,7 @@
             id: botaook
             text: 'Escolher'
             size_hint_x: None
-            size_hint_x: None
+            size_hint_y: None
             weight: 30
             height: 30
             on_release: app.root.current = 'cadastropeca'

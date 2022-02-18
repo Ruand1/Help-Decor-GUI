@@ -3,47 +3,19 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
+from kivy.uix.popup import Popup
+from kivy.uix.image import Image
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.graphics import Color, Ellipse, Rectangle
-from kivy.properties import ListProperty, ObjectProperty
-from os import path
-from PIL import Image, ImageEnhance
+from kivy.properties import ListProperty
+#from android.permissions import request_permissions, Permission  # PARA RODAR NO DESKTOP COMENTAR ESTA LINHA
 import kivy
 kivy.require('2.0.0')
 
 
 class Telamenus(ScreenManager):  #<---- Gerenciador das Telas
     pass
-
-
-"""class Editor():
-    img = None  #  Variável para armazenar foto escolhida pelo usuário
-    img_formato = None  #  Variável armazena formato da imagem
-    img_local = None  #  Variável para armazenar local da imagem
-    img_nome = None  #  Variável para armazenar nome da imagem
-    img_ext = None  #  Variável para armazenar extensão da imagem
-
-    def resetar(self):
-        self.img = None
-        self.img_formato = None
-        self.img_local = None
-        self.img_nome = None
-        self.img_ext = None
-
-    def carregar_imagem(self, imagem):
-        try:
-            self.img = Image.open(imagem)
-            self.img_formato = self.img.format
-            self.img_local = path.dirname(path.realpath(imagem))
-            self.img_nome, self.img_ext = path.splitext(path.basename(imagem))
-            print('Imagem carregada...')
-            return True
-        except:
-            print('Falha ao carregar imagem...')
-            return False"""
 
 
 class Menu(Screen):  #<---- Tela de Menus Geral
@@ -135,9 +107,17 @@ class Cadastropeca(Screen):
     cadastropecalist = []
     cadpeca = []
     cadfoto = []
+    cadqtd = []
+    cadunique = []
     cadastrotextopeca = []
     cadastrolocalpeca = []
+    cadastroqtdpeca = []
+    cadastrouniquepeca = []
     path = ''
+    bsobeposicao = []
+
+    testeunique = []
+
 
     #  <----------- USAR ESC PARA VOLTAR
     def on_pre_enter(self):  # <----Vincula um evento de teclado em uma tela(CadastroPecas)
@@ -149,9 +129,11 @@ class Cadastropeca(Screen):
         Window.bind(on_keyboard=self.voltar)
         print(f'{self.cadastrotextopeca} On pre enter')
         print(self.cadastrolocalpeca)
+        print(self.cadastroqtdpeca)
+        print(self.cadastrouniquepeca)
 
         for peca in self.cadastrotextopeca:
-            self.ids.boxcadpeca.add_widget(AddCadPeca(text=self.cadastrotextopeca[cont], localimagem=self.cadastrolocalpeca[cont]))
+            self.ids.boxcadpeca.add_widget(AddCadPeca(idpeca=self.cadastrouniquepeca[cont], text=self.cadastrotextopeca[cont], localimagem=self.cadastrolocalpeca[cont], quantidade=self.cadastroqtdpeca[cont]))
             cont += 1
 
     def voltar(self, window, key, *args):  # <----Se o usuário apertar ESC(27) --- Volta tela
@@ -171,6 +153,12 @@ class Cadastropeca(Screen):
 
             with open(self.path+'datapecalocal.json', 'r') as datalocal:
                 self.cadastrolocalpeca = json.load(datalocal)
+
+            with open(self.path+'datapecaqtd.json', 'r') as dataqtd:
+                self.cadastroqtdpeca = json.load(dataqtd)
+
+            with open(self.path+'datapecaunique.json', 'r') as dataunique:
+                self.cadastrouniquepeca = json.load(dataunique)
         except FileNotFoundError:
             pass
 
@@ -179,39 +167,51 @@ class Cadastropeca(Screen):
             json.dump(self.cadastrotextopeca, datatexto)
         with open(self.path+'datapecalocal.json', 'w') as datalocal:
             json.dump(self.cadastrolocalpeca, datalocal)
+        with open(self.path+'datapecaqtd.json', 'w') as dataqtd:
+            json.dump(self.cadastroqtdpeca, dataqtd)
+        with open(self.path+'datapecaunique.json', 'w') as dataunique:
+            json.dump(self.cadastrouniquepeca, dataunique)
 
     def removerCadastro(self, AddCadPeca):
         texto = AddCadPeca.ids.rotulocadpeca.text
-        imagem = AddCadPeca.ids.imagem_carregada.source
+        imagem = AddCadPeca.ids.imagem_popup.background_normal
+        qtd = AddCadPeca.ids.rotuloqtdpeca.text
+        uniquepeca = AddCadPeca.ids.uniquepeca.text
         self.ids.boxcadpeca.remove_widget(AddCadPeca)
         self.cadastrotextopeca.remove(texto)
         self.cadastrolocalpeca.remove(imagem)
+        self.cadastroqtdpeca.remove(qtd)
+        self.cadastrouniquepeca.remove(uniquepeca)  # VERIFICAR POSSIVEL ERRO
         self.saveData()
 
     def adicionarpeca(self):  #<---- Widget que adiciona o cadastro das peças a tela
-        #self.cadpeca = []
-        #self.cadfoto = []
-
         self.cadpeca = self.ids.cadastropec.text
         self.cadfoto = Escolherfoto().passarselecao()  # 4º Variável cadfoto recebe o caminho da imagem
+        self.cadqtd = self.ids.quantidadepec.text
+        if self.cadastrouniquepeca == '':
+            self.cadunique = '1'
+        else:
+            self.cadunique = str(len(self.cadastrouniquepeca) + 1)
 
         self.cadastrotextopeca.append(self.cadpeca)
         self.cadastrolocalpeca.append(self.cadfoto)
+        self.cadastroqtdpeca.append(self.cadqtd)
+        self.cadastrouniquepeca.append(self.cadunique)
 
-        #print(f'{self.cadastrotextopeca} Adicionar peça')
-        #print(self.cadastrolocalpeca)
-
-        self.ids.boxcadpeca.add_widget(AddCadPeca(text=self.cadpeca, localimagem=self.cadfoto))  # <----Inclui texto e imagem ao widget de cadastro de peças
-        self.ids.cadastropec.text = ''
-
-        #contadorpeca +=1  # <------- TESTE para acrescentar id nas peças
+        self.ids.boxcadpeca.add_widget(AddCadPeca(idpeca=self.cadunique, text=self.cadpeca, localimagem=self.cadfoto, quantidade=self.cadqtd))  # <----Inclui texto e imagem ao widget de cadastro de peças
+        self.ids.cadastropec.text = ''  #<-----TROCAR VARIÀVEL PARA descricaopec
+        self.ids.quantidadepec.text = ''
         self.saveData()
+
+    def sobeposicao(self):
+        pass
 
 
 class Escolherfoto(Screen):
     listalocais = []
     imagempeca = ''
     teste = []
+    localimagem = ''
 
 # QUANDO APERTAR AQUI REMOVE OS WIDGETS DA TELA
 
@@ -234,10 +234,14 @@ class Escolherfoto(Screen):
         #print(self.listalocais)  # TESTE 2º Acrescenta o endereço em uma lista
 
     def passarselecao(self):  # < ------ Função para jogar o caminho da imagem para a classe adicionarpeca
-        pos = len(self.listalocais) - 1
-        self.localimagem = str(self.listalocais[pos])
-        #print(self.localimagem)  # 3º Variavel teste recebe o caminho da imagem em uma variável
-        return self.localimagem
+        if len(self.listalocais) == 0:
+            self.localimagem = ''
+            return self.localimagem
+        else:
+            pos = len(self.listalocais) - 1
+            self.localimagem = str(self.listalocais[pos])
+            #print(self.localimagem)  # 3º Variavel teste recebe o caminho da imagem em uma variável
+            return self.localimagem
 
 
 # VERIFICAR ERRO SE USUÁRIO NÃO ESCOLHER IMAGEM, NEM ESCREVER TEXTO
@@ -250,6 +254,19 @@ class Escolherfoto(Screen):
 # NO RETORNO ESTA DUPLICANDO CADASTRO - FOI COLOCADO NO ON_PRE_LEAVE A REMOÇÃO DOS WIDGETS
 # PARTE DE CADASTRO DE PEÇAS FOI FINALIZADO - VERIFICAR ERROS E MELHORAMENTOS
 # ------------------------------------------------------------------------------
+# PROBLEMAS NAS PERMISSOES DO ANDROID PARA ACESSAR STORAGE - OK Funcionando
+# ------------------------------------------------------------------------------
+# INCLUIR QUANTIDADE NAS PEÇAS - OK
+# VERIFICAR MODO PARA ALTERAR DESCRIÇÃO E QTD PEÇAS - SE CONSEGUIR MUDAR POSIÇÃO NAO SERA NECESSARIO
+# AUMENTAR IMAGEM AO CLICAR NO ICONE - OK
+# PROBLEMAS PARA REMOVER WIDGET - OK - SEMPRE VERIFICAR SE ESTA ENTRE '' NAS LISTAS
+# PROBLEMAS PARA ADICIONAR WIDGET SE USUARIO NÃO ESCOLHER IMAGEM - OK - FAZER MELHORIAS
+# MUDAR POSIÇÃO DOS WIDGETS AO ARRASTAR
+    #usuario deve clicar e arrastar widget
+    #python irá alterar a posição
+    #Solução 1 - criar dois botoes ^ v onde o python refaz as posições das listas
+        # FOI CRIADO ID INDIVIDUAL DAS PEÇAS ASSIM SERÁ POSSIVEL MODIFICAR POSIÇÃO - OK
+# ------------------------------------------------------------------------------
 # COMEÇAR PARTE DE GERAR RELATORIO DE LOCAÇÃO
 
 # FAZER CADASTRO DE CLIENTES - MELHORIA
@@ -258,11 +275,21 @@ class Escolherfoto(Screen):
 # TENTAR MUDAR OS WIDGETS DE LABEL PARA BOTÃO E MOSTRAR DETALHES DO CADASTRO
 
 class AddCadPeca(BoxLayout):  #<--- Widget com o cadastro da peça
-    def __init__(self, text='', localimagem='', **kwargs):
+    def __init__(self,idpeca='', text='', localimagem='', quantidade='', **kwargs):
         super().__init__(**kwargs)
         self.ids.rotulocadpeca.text = str(text)  # VERIFICAR RETIRAR STR
-        self.ids.imagem_carregada.source = str(localimagem)  # <------ Adiciona imagem carregada
-        #self.ids.contpeca.text = contadorpeca  # <------- TESTE para acrescentar id nas peças
+
+        self.ids.rotuloqtdpeca.text = str(quantidade)
+
+        self.ids.imagem_popup.background_normal = str(localimagem)
+
+        self.carregaimagem = localimagem
+
+        self.ids.uniquepeca.text = str(idpeca)
+
+    def aumentarfoto(self, *args):
+        pop = Popup(title='Imagem Peça', content=Image(source=self.carregaimagem))
+        pop.open()
 
 
 class Botao(ButtonBehavior, Label):
@@ -292,6 +319,8 @@ class Botao(ButtonBehavior, Label):
 class HelpDecorTest(App):
     def build(self):
         return Telamenus()
+#    def on_start(self):  # PARA RODAR NO DESKTOP COMENTAR ESTA LINHA
+#        request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 
 HelpDecorTest().run()
