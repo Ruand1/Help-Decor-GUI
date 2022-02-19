@@ -14,8 +14,10 @@
         name: 'cadastropeca'
     Escolherfoto:
         name: 'escolherfoto'
-#    Locacao:
-#        name: 'locacao'
+    Locacao:
+        name: 'locacao'
+    Gerarlocacao:
+        name: 'gerarlocacao'
 
 
 # <-----------------------MENU PRINCIPAL------------------------------>
@@ -102,6 +104,11 @@
         padding: 50
         spacing: 5
         Botao:
+            text: 'Locação'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'locacao'
+        Botao:
             text: 'Cadastrar Peças'
             size_hint_y: None
             height: 60
@@ -162,46 +169,81 @@
             size_hint_y: None
             height:30
             Label:
-                text: 'Imagem'
+                text: 'Img'
                 font_size: 10
-                size_hint_x: None
-                weight: 30
+                size_hint: None, None
+                size: 30, 30
             Label:
                 text: 'Descrição'
                 font_size: 10
             Label
-                text: 'Quantidade'
+                text: 'Qtd'
                 font_size: 10
-                size_hint_x: None
-                weight: 10
+                size_hint: None, None
+                size: 30, 30
             Label:
-                text: 'Adicionar'
+                text: 'Add'
                 font_size: 10
-                size_hint_x: None
-                weight: 30
+                size_hint: None, None
+                size: 30, 30
 
 #FORMULARIO DE CADASTRO DE PEÇAS
         BoxLayout:
             size_hint_y: None
             height: 60
             Button:
-                text: 'Inserir Imagem'
-                font_size: 10
-                size_hint_x: None
-                weight: 30
+                text: '+'
+                size_hint: None, None
+                size: 30, 60
                 on_release: app.root.current = 'escolherfoto'
             TextInput:
                 id: cadastropec
             TextInput:
                 id: quantidadepec
-                size_hint_x: None
-                weight: 10
+                size_hint: None, None
+                size: 30, 60
             Button:
                 text: '+'
-                size_hint_x: None
-                weight: 30
+                size_hint: None, None
+                size: 30, 60
                 on_release: root.adicionarpeca()
 
+# <-----------------------TELA DE LOCAÇÃO
+<Locacao>
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 5
+        Botao:
+            text: 'Gerar Nova Locação'
+            size_hint_y: None
+            height: 60
+    #        on_release: app.root.get_screen('gerarlocacao').adicionarlocacao()
+            on_release: app.root.current = 'gerarlocacao'
+        Botao:
+            text: 'Voltar'
+            size_hint_y: None
+            height: 60
+            on_release: app.root.current = 'menupeca'
+
+# <-----------------------TELA GERAR LOCAÇÃO
+<gerarlocacao>
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'My first Item'
+            size_hint_y: None
+            height: 44
+            on_release: root.select('item1')
+        Label:
+            text: 'Unselectable item'
+            size_hint_y: None
+            height: 44
+        Button:
+            text: 'My second Item'
+            size_hint_y: None
+            height: 44
+            on_release: root.select('item2')
 
 # <-----------------------WIDGET COM O CADASTRO DO CLIENTE------------------------------>
 <AddCadCliente>
@@ -223,20 +265,23 @@
     BoxLayout:
         orientation: 'vertical'
         id: mudarposicao
-#        size_hint: 0.1, 1
+        size_hint: None, None
+        size: 30, 60
 #        weight: self.minimum_weight
         spacing: 0
         Button:
-            id: bsobeposicao
+            id: sobeposicao
             text: '^'
-            size_hint: 0.10, 1
-            on_release: app.root.get_screen('cadastropeca').sobeposicao()
+            on_release: app.root.get_screen('cadastropeca').sobeposicao(root)
         Button:
             id: desceposicao
             text: 'v'
-            size_hint: 0.10, 1
+            on_release: app.root.get_screen('cadastropeca').desceposicao(root)
     Label:
         id: uniquepeca
+        size_hint: None, None
+        size: 30, 60
+        font_size: 10
         spacing: 0
 
 # BOTÃO PARA POPUP DA IMAGEM DA PEÇA
@@ -244,23 +289,24 @@
         background_normal: ''
         border: 0,0,0,0
         id: imagem_popup
-        size_hint: 0.15, 1
-#        pos: 100, 100
+        size_hint: None, None
+        size: 40, 60
         on_release: root.aumentarfoto()
         spacing: 0
     Label:
         id: rotulocadpeca
+        font_size: 12
         spacing: 0
     Label:
         id: rotuloqtdpeca
-        size_hint_x: None
-        weight: 30
+        size_hint: None, None
+        size: 30, 60
+        font_size: 12
         spacing: 0
     Button:
         text: 'x'
-        size_hint_x: None
-        weight: 30
-        size_hint: 0.15, 1
+        size_hint: None, None
+        size: 30, 30
         on_release:app.root.get_screen('cadastropeca').removerCadastro(root)
 
 # <-----------------------TELA DE SELEÇÃO DE IMAGEM DAS PEÇAS------------------------------>

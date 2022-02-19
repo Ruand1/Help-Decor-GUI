@@ -6,6 +6,9 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.image import Image
+from kivy.uix.dropdown import DropDown
+from kivy.uix.button import Button
+from kivy.base import runTouchApp
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.graphics import Color, Ellipse, Rectangle
 from kivy.properties import ListProperty
@@ -203,8 +206,68 @@ class Cadastropeca(Screen):
         self.ids.quantidadepec.text = ''
         self.saveData()
 
-    def sobeposicao(self):
+    def sobeposicao(self, AddCadPeca):
+        uniquepeca = int(AddCadPeca.ids.uniquepeca.text)
+        for widget in range(len(self.ids.boxcadpeca.children)+1):  # <----- Remove temporariamente os widgets da tela
+            if uniquepeca == widget and uniquepeca != 1:
+                self.cadastrotextopeca[uniquepeca-1], self.cadastrotextopeca[uniquepeca-2] = self.cadastrotextopeca[uniquepeca-2], self.cadastrotextopeca[uniquepeca-1]
+                self.cadastrolocalpeca[uniquepeca-1], self.cadastrolocalpeca[uniquepeca-2] = self.cadastrolocalpeca[uniquepeca-2], self.cadastrolocalpeca[uniquepeca-1]
+                self.cadastroqtdpeca[uniquepeca-1], self.cadastroqtdpeca[uniquepeca-2] = self.cadastroqtdpeca[uniquepeca-2], self.cadastroqtdpeca[uniquepeca-1]
+                self.cadastrouniquepeca[uniquepeca-1], self.cadastrouniquepeca[uniquepeca-2] = self.cadastrouniquepeca[uniquepeca-1], self.cadastrouniquepeca[uniquepeca-2]
+            elif int(uniquepeca) == widget and int(uniquepeca) == 1:
+                pop = Popup(title='Erro..', content=Label(text='Este cadastro esta no topo da lista'), size_hint=(None, None),
+                            size=(260, 100))
+                pop.open()
+        self.saveData()
+        self.on_pre_leave()
+        self.on_pre_enter()
+
+    def desceposicao(self, AddCadPeca):
+        uniquepeca = int(AddCadPeca.ids.uniquepeca.text)
+        for widget in range(len(self.ids.boxcadpeca.children)+1):  # <----- Remove temporariamente os widgets da tela
+            if uniquepeca == widget and uniquepeca != len(self.ids.boxcadpeca.children):
+                self.cadastrotextopeca[uniquepeca-1], self.cadastrotextopeca[uniquepeca] = self.cadastrotextopeca[uniquepeca], self.cadastrotextopeca[uniquepeca-1]
+                self.cadastrolocalpeca[uniquepeca-1], self.cadastrolocalpeca[uniquepeca] = self.cadastrolocalpeca[uniquepeca], self.cadastrolocalpeca[uniquepeca-1]
+                self.cadastroqtdpeca[uniquepeca-1], self.cadastroqtdpeca[uniquepeca] = self.cadastroqtdpeca[uniquepeca], self.cadastroqtdpeca[uniquepeca-1]
+                self.cadastrouniquepeca[uniquepeca-1], self.cadastrouniquepeca[uniquepeca] = self.cadastrouniquepeca[uniquepeca-1], self.cadastrouniquepeca[uniquepeca]
+            elif int(uniquepeca) == widget and uniquepeca == len(self.ids.boxcadpeca.children):
+                pop = Popup(title='Erro..', content=Label(text='Este cadastro esta no fundo da lista'), size_hint=(None, None),
+                            size=(260, 100))
+                pop.open()
+        self.saveData()
+        self.on_pre_leave()
+        self.on_pre_enter()
+
+
+class Locacao(Screen):
+    def on_pre_enter(self):  # <----Vincula um evento de teclado em uma tela(CadastroPecas)
+        Window.bind(on_keyboard=self.voltar)
+
+    def voltar(self, window, key, *args):  # <----Se o usuário apertar ESC(27) --- Volta tela
+        if key == 27:
+            App.get_running_app().root.current = 'menupeca'
+            return True
+
+    def on_pre_leave(self):  # <----Desvincula o evento de botão à tela
+        Window.unbind(on_keyboard=self.voltar)
+
+    def gerarlocacao(self):  # <---- FUNÇÃO OU CLASSE
         pass
+
+
+class Gerarlocacao(Screen):
+
+    pass
+#    dropdown = DropDown()
+#    for index in range(10):
+#        btn = Button(text='Value %d' % index, size_hint_y=None, height=44)
+#        btn.bind(on_release=lambda btn: dropdown.select(btn.text))
+#        dropdown.add_widget(btn)
+
+
+#    def adicionarlocacao(self):
+#        pass
+#    pass
 
 
 class Escolherfoto(Screen):
@@ -244,35 +307,53 @@ class Escolherfoto(Screen):
             return self.localimagem
 
 
+
+#15/02/22
 # VERIFICAR ERRO SE USUÁRIO NÃO ESCOLHER IMAGEM, NEM ESCREVER TEXTO
-
-
+# verificado, foi incluido atribuições padroes, assim ao adicionar o widget sai em branco
 # CRIAR UM BOTAO PARA ABRIR CAIXA DE SELEÇÃO - OK
 # MODO DE ABRIR CAIXA DE SELEÇÃO - VER VÍDEO - OK, ABRIU CAIXA DE SELEÇÃO E ESCOLHEU IMAGEM - OK
 # GRAVAR CAMINHO DA IMAGEM EM UMA VARIÁVEL - OK - VARIAVEL localimagem GUARDANDO CAMINHO
 # MODO DE ATRIBUIR A VARIAVEL cadfoto, O CAMINHO DA FOTO ESCOLHIDO PELO USUÁRIO - OK
-# NO RETORNO ESTA DUPLICANDO CADASTRO - FOI COLOCADO NO ON_PRE_LEAVE A REMOÇÃO DOS WIDGETS
+# NO RETORNO ESTA DUPLICANDO CADASTRO - OK
+# foi acrescentado a função on_pre_leave a remoção dos widgets
 # PARTE DE CADASTRO DE PEÇAS FOI FINALIZADO - VERIFICAR ERROS E MELHORAMENTOS
 # ------------------------------------------------------------------------------
+# 16/02/22
 # PROBLEMAS NAS PERMISSOES DO ANDROID PARA ACESSAR STORAGE - OK Funcionando
+# inserir permissões no .spec
+# inserir android.permissions para requisitar ao usuario a permissão de acesso
 # ------------------------------------------------------------------------------
+# 17/02/22
 # INCLUIR QUANTIDADE NAS PEÇAS - OK
 # VERIFICAR MODO PARA ALTERAR DESCRIÇÃO E QTD PEÇAS - SE CONSEGUIR MUDAR POSIÇÃO NAO SERA NECESSARIO
 # AUMENTAR IMAGEM AO CLICAR NO ICONE - OK
 # PROBLEMAS PARA REMOVER WIDGET - OK - SEMPRE VERIFICAR SE ESTA ENTRE '' NAS LISTAS
 # PROBLEMAS PARA ADICIONAR WIDGET SE USUARIO NÃO ESCOLHER IMAGEM - OK - FAZER MELHORIAS
+# 18/02/22
+# ARRUMAR A DISPOSIÇÃO DOS WIDGETS NO CADASTRO DAS PEÇAS - OK
 # MUDAR POSIÇÃO DOS WIDGETS AO ARRASTAR
-    #usuario deve clicar e arrastar widget
+    #usuario deve clicar e arrastar widget - PROXIMA VERSÃO
     #python irá alterar a posição
     #Solução 1 - criar dois botoes ^ v onde o python refaz as posições das listas
         # FOI CRIADO ID INDIVIDUAL DAS PEÇAS ASSIM SERÁ POSSIVEL MODIFICAR POSIÇÃO - OK
+#19/02/22
+# UTILIZADO SOLUÇÃO 1 PARA POSIÇÃO DOS WIDGET - OK
+# os botoes de sobe e desce estão funcionando e gravando
+# PROCURAR SOLUÇÃO MAIS INTELIGENTE NAS PROXIMAS VERSÕES
 # ------------------------------------------------------------------------------
 # COMEÇAR PARTE DE GERAR RELATORIO DE LOCAÇÃO
+# CRIAR BOTÃO LOCAÇÃO - OK
+# CRIAR TELA DE LOCAÇÃO -
+
+
 
 # FAZER CADASTRO DE CLIENTES - MELHORIA
 # FAZER CADASTRO DE FORNECEDORES -
 
 # TENTAR MUDAR OS WIDGETS DE LABEL PARA BOTÃO E MOSTRAR DETALHES DO CADASTRO
+# ao inves disso fazer um botão que gera um popup com a descrição do produto
+# na descrição inicial criar apenas um apelido como atalho
 
 class AddCadPeca(BoxLayout):  #<--- Widget com o cadastro da peça
     def __init__(self,idpeca='', text='', localimagem='', quantidade='', **kwargs):
@@ -288,7 +369,7 @@ class AddCadPeca(BoxLayout):  #<--- Widget com o cadastro da peça
         self.ids.uniquepeca.text = str(idpeca)
 
     def aumentarfoto(self, *args):
-        pop = Popup(title='Imagem Peça', content=Image(source=self.carregaimagem))
+        pop = Popup(title='Imagem Peça', content=Image(source=self.carregaimagem), size_hint=(None, None), size=(300, 450))
         pop.open()
 
 
