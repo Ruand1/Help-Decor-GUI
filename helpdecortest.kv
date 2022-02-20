@@ -72,7 +72,7 @@
                 height: 40
                 allow_stretch: True
             Label:
-                text: 'V1.0.1'
+                text: 'V0.1.6'
                 size_hint_y: None
                 height: 40
                 color: 'green'
@@ -229,21 +229,40 @@
 # <-----------------------TELA GERAR LOCAÇÃO
 <gerarlocacao>
     BoxLayout:
-        orientation: 'vertical'
-        Button:
-            text: 'My first Item'
-            size_hint_y: None
-            height: 44
-            on_release: root.select('item1')
-        Label:
-            text: 'Unselectable item'
-            size_hint_y: None
-            height: 44
-        Button:
-            text: 'My second Item'
-            size_hint_y: None
-            height: 44
-            on_release: root.select('item2')
+        orientation: 'horizontal'
+        #size: root.width, root.height
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: 300, root.height
+            Label:
+                id: click_label
+                text: 'Selecione a peça'
+                size_hint: None, None
+                size: 150, 10
+
+            Spinner:
+                id: spinner_id
+                text: 'Peça'
+                size_hint: None, None
+                size: 150, 20
+                values: ['Vaso Rosa Grande', 'Vaso Preto Grande', 'Vaso Verde Grande', 'Vaso Azul Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande']
+
+                on_text: root.spinner_clicked(spinner_id.text)
+            Label:
+                text: ''
+                size_hint: None, None
+                size: 150, 150
+        BoxLayout:
+            Label:
+                text: 'Aqui será feito o pdf'
+            Botao:
+                text: 'Gerar PDF'
+                size_hint: None, None
+                size: 150, 20
+                on_release: root.gerarpdf()
+
+
 
 # <-----------------------WIDGET COM O CADASTRO DO CLIENTE------------------------------>
 <AddCadCliente>

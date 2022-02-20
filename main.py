@@ -12,12 +12,13 @@ from kivy.base import runTouchApp
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.graphics import Color, Ellipse, Rectangle
 from kivy.properties import ListProperty
-#from android.permissions import request_permissions, Permission  # PARA RODAR NO DESKTOP COMENTAR ESTA LINHA
+from reportlab.pdfgen import canvas
+#  from android.permissions import request_permissions, Permission  # PARA RODAR NO DESKTOP COMENTAR ESTA LINHA
 import kivy
 kivy.require('2.0.0')
 
 
-class Telamenus(ScreenManager):  #<---- Gerenciador das Telas
+class Telamenus(ScreenManager):  #  <---- Gerenciador das Telas
     pass
 
 
@@ -130,10 +131,10 @@ class Cadastropeca(Screen):
         #print(self.path)  #<------ Somente testes ver caminho pastas de cadastro
         self.loadData()
         Window.bind(on_keyboard=self.voltar)
-        print(f'{self.cadastrotextopeca} On pre enter')
-        print(self.cadastrolocalpeca)
-        print(self.cadastroqtdpeca)
-        print(self.cadastrouniquepeca)
+        #print(f'{self.cadastrotextopeca} On pre enter')  # APENAS PARA TESTES
+        #print(self.cadastrolocalpeca)
+        #print(self.cadastroqtdpeca)
+        #print(self.cadastrouniquepeca)
 
         for peca in self.cadastrotextopeca:
             self.ids.boxcadpeca.add_widget(AddCadPeca(idpeca=self.cadastrouniquepeca[cont], text=self.cadastrotextopeca[cont], localimagem=self.cadastrolocalpeca[cont], quantidade=self.cadastroqtdpeca[cont]))
@@ -256,13 +257,70 @@ class Locacao(Screen):
 
 
 class Gerarlocacao(Screen):
+    cadastrotextopeca = []
+    cadastrolocalpeca = []
+    cadastroqtdpeca = []
+    cadastrouniquepeca = []
+    path = ''
 
-    pass
+    def on_pre_enter(self):  # <----Vincula um evento de teclado em uma tela(CadastroPecas)
+        Window.bind(on_keyboard=self.voltar)
+
+    def voltar(self, window, key, *args):  # <----Se o usuário apertar ESC(27) --- Volta tela
+        if key == 27:
+            App.get_running_app().root.current = 'menupeca'
+            return True
+
+    def on_pre_leave(self):  # <----Desvincula o evento de botão à tela
+        Window.unbind(on_keyboard=self.voltar)
+
+    def loadData(self, *args):
+        try:
+            with open(self.path+'datapecatexto.json', 'r') as datatexto:
+                self.cadastrotextopeca = json.load(datatexto)
+
+            with open(self.path+'datapecalocal.json', 'r') as datalocal:
+                self.cadastrolocalpeca = json.load(datalocal)
+
+            with open(self.path+'datapecaqtd.json', 'r') as dataqtd:
+                self.cadastroqtdpeca = json.load(dataqtd)
+
+            with open(self.path+'datapecaunique.json', 'r') as dataunique:
+                self.cadastrouniquepeca = json.load(dataunique)
+        except FileNotFoundError:
+            pass
+
+    def spinner_clicked(self, value):
+        self.path = App.get_running_app().user_data_dir + "/"
+        self.loadData()
+
+        self.ids.click_label.text = value
+        print(f'{self.cadastrotextopeca} On pre enter')  # APENAS PARA TESTES
+        print(self.cadastrolocalpeca)
+        print(self.cadastroqtdpeca)
+        print(self.cadastrouniquepeca)
+
+    def gerarpdf(self):
+        print('Estou tentando gerar a locação')
+        cnv = canvas.Canvas("Locacao.pdf")
+        cnv.drawString(150, 450, "Primeira Locação Teste!")
+        cnv.save()
+        return 0
+
+#    pass
+
+
+
+
+#    box = BoxLayout()
 #    dropdown = DropDown()
+#    box.add_widget(dropdown)
 #    for index in range(10):
 #        btn = Button(text='Value %d' % index, size_hint_y=None, height=44)
-#        btn.bind(on_release=lambda btn: dropdown.select(btn.text))
-#        dropdown.add_widget(btn)
+#        btn.bind(on_release=lambda btn: self.ids.dropdown.select(btn.text))
+#        self.ids.dropdown.add_widget(btn)
+#    botao = Button(text='Ruan')
+#    box.add_widget(botao)
 
 
 #    def adicionarlocacao(self):
