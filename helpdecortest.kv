@@ -230,30 +230,92 @@
 <gerarlocacao>
     BoxLayout:
         orientation: 'horizontal'
-        #size: root.width, root.height
+#        size_hint: 1, 1
+#        size: self.weight, self.height
         BoxLayout:
             orientation: 'vertical'
-            size_hint: None, None
-            size: 300, root.height
+            size: 150, self.height
+# --------- Usuário Escolhe Nome e quantidade de peças
             Label:
-                id: click_label
-                text: 'Selecione a peça'
+                text: 'Escolher dados:'
+                font_size: 13
                 size_hint: None, None
-                size: 150, 10
+                size: 100, 20
 
+# --------- Início escolher nome
             Spinner:
-                id: spinner_id
-                text: 'Peça'
+                id: cliente_id
+                text: 'Nome Cliente'
+                font_size: 13
                 size_hint: None, None
-                size: 150, 20
-                values: ['Vaso Rosa Grande', 'Vaso Preto Grande', 'Vaso Verde Grande', 'Vaso Azul Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande', 'Vaso Cinza Grande']
+                size: 100, 20
+                values: root.passarlistacliente()
+                on_text: root.spinner_cliente(cliente_id.text)
 
-                on_text: root.spinner_clicked(spinner_id.text)
-            Label:
-                text: ''
+# --------- Início escolher peça
+            BoxLayout:
+                orientation: 'horizontal'
                 size_hint: None, None
-                size: 150, 150
+                size: 120, 20
+                Spinner:
+                    id: peca_id
+                    text: 'Peça'
+                    font_size: 13
+                    size_hint: None, None
+                    size: 100, 20
+                    values: root.passarlistapeca()
+                    on_text: root.spinner_peca(peca_id.text)
+#                Button:
+#                    id: addpeca
+#                    text: '+'
+#                    font_size: 12
+#                    size_hint: None, None
+#                    size: 20, 20
+#                    on_release: root.adicionarlocacao()
+
+        ########################################
+            ScrollView:
+                BoxLayout:
+                    id: boxlocacao
+                    orientation: 'vertical'
+
+
+# ---------- Tela de Configuração do PDF
         BoxLayout:
+            orientation: 'vertical'
+            size: 500, self.height
+            Image:
+                source: 'imagens/helpdecor.png'
+            BoxLayout:
+                orientation: 'horizontal'
+    #            size_hint: None, None
+    #            size: 200, 40
+                Label:
+                    text: 'Nome do Cliente:'
+                    font_size: 13
+                    size_hint: None, None
+                    size: 100, 20
+                Label:
+                    id: click_cliente
+                    text: ''
+                    font_size: 12
+                    size_hint: None, None
+                    size: 100, 20
+            BoxLayout:
+                orientation: 'vertical'
+                id: gerapdf
+                Label:
+                    text: 'Peças:'
+                    font_size: 13
+                    size_hint: None, None
+                    size: 100, 20
+                Label:
+                    id: click_peca
+                    text: 'Selecione a peça'
+                    font_size: 13
+                    size_hint: None, None
+                    size: 100, 20
+
             Label:
                 text: 'Aqui será feito o pdf'
             Botao:
@@ -261,6 +323,8 @@
                 size_hint: None, None
                 size: 150, 20
                 on_release: root.gerarpdf()
+
+
 
 
 
@@ -340,6 +404,7 @@
             id: filechooser
             on_selection: root.selecionar(filechooser.selection)
         Image:
+#            orientation: 'vertical'
             id: imagempeca
             source: ''
         Button:

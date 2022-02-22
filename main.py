@@ -6,7 +6,8 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.image import Image
-from kivy.uix.dropdown import DropDown
+from kivy.uix.textinput import TextInput
+from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
 from kivy.base import runTouchApp
 from kivy.uix.behaviors.button import ButtonBehavior
@@ -261,6 +262,8 @@ class Gerarlocacao(Screen):
     cadastrolocalpeca = []
     cadastroqtdpeca = []
     cadastrouniquepeca = []
+    cadastrocliente = []
+    cadastropeca = []
     path = ''
 
     def on_pre_enter(self):  # <----Vincula um evento de teclado em uma tela(CadastroPecas)
@@ -287,45 +290,80 @@ class Gerarlocacao(Screen):
 
             with open(self.path+'datapecaunique.json', 'r') as dataunique:
                 self.cadastrouniquepeca = json.load(dataunique)
+
+            with open(self.path+'data.json', 'r') as data:
+                self.cadastrocliente = json.load(data)
         except FileNotFoundError:
             pass
 
-    def spinner_clicked(self, value):
+    def spinner_cliente(self, value):
         self.path = App.get_running_app().user_data_dir + "/"
         self.loadData()
 
-        self.ids.click_label.text = value
-        print(f'{self.cadastrotextopeca} On pre enter')  # APENAS PARA TESTES
+        self.ids.click_cliente.text = value
+        print(f'{self.cadastrocliente} Cadastro Cliente')
+        print(f'{self.cadastrotextopeca} Cadastro Peças')  # APENAS PARA TESTES
         print(self.cadastrolocalpeca)
         print(self.cadastroqtdpeca)
         print(self.cadastrouniquepeca)
+        teste = Gerarlocacao().passarlistapeca()
+        print(teste)
+
+    def spinner_peca(self, value):
+#        self.path = App.get_running_app().user_data_dir + "/"
+#        self.loadData()
+
+#        self.ids.click_peca.text = value
+        self.box = BoxLayout()
+        self.label = Label(text=value, font_size=13)
+        self.textinput = TextInput()
+
+        self.box.add_widget(self.label)
+        self.box.add_widget(self.textinput)
+
+        self.ids.gerapdf.add_widget(self.box)
 
     def gerarpdf(self):
-        print('Estou tentando gerar a locação')
-        cnv = canvas.Canvas("Locacao.pdf")
-        cnv.drawString(150, 450, "Primeira Locação Teste!")
+        cont = 0
+        x = 10
+        y = 770
+        self.path = App.get_running_app().user_data_dir + "/"
+        self.loadData()
+
+        cnv = canvas.Canvas("Locacao1.pdf")
+        cnv.drawString(10, 830, f'Nome do cliente: {self.cadastrocliente}')
+        cnv.drawString(10, 810, 'Endereço: Rua Lupercio de Miranda, 1776')
+        cnv.drawString(10, 790, '         ID               Imagem                                        Descrição                      Qtd')
+
+        for peca in self.cadastrotextopeca:
+            cnv.drawString(x, y, f'Peça: {self.cadastrouniquepeca[cont]:<3}{self.cadastrolocalpeca[cont]:<40}{self.cadastrotextopeca[cont]:<40}{self.cadastroqtdpeca[cont]:<5}')
+            cont += 1
+            y -= 15
         cnv.save()
         return 0
 
-#    pass
+
+    def passarlistacliente(self):
+        self.path = App.get_running_app().user_data_dir + "/"
+        self.loadData()
+        self.cadastrocliente = self.cadastrocliente
+        return self.cadastrocliente
+
+    def passarlistapeca(self):
+        self.path = App.get_running_app().user_data_dir + "/"
+        self.loadData()
+        self.cadastropeca = self.cadastrotextopeca
+        return self.cadastropeca
+
+    def adicionarlocacao(self):
+        pass
+#        self.spinner = Spinner(text='Peça', font_size=13, size_hint=(None, None), size=(100, 20),
+#                               values=self.passarlistapeca())
+#        self.ids.boxlocacao.add_widget(self.spinner)
 
 
-
-
-#    box = BoxLayout()
-#    dropdown = DropDown()
-#    box.add_widget(dropdown)
-#    for index in range(10):
-#        btn = Button(text='Value %d' % index, size_hint_y=None, height=44)
-#        btn.bind(on_release=lambda btn: self.ids.dropdown.select(btn.text))
-#        self.ids.dropdown.add_widget(btn)
-#    botao = Button(text='Ruan')
-#    box.add_widget(botao)
-
-
-#    def adicionarlocacao(self):
-#        pass
-#    pass
+class addlocacao(BoxLayout):
+    pass
 
 
 class Escolherfoto(Screen):
@@ -400,11 +438,19 @@ class Escolherfoto(Screen):
 # os botoes de sobe e desce estão funcionando e gravando
 # PROCURAR SOLUÇÃO MAIS INTELIGENTE NAS PROXIMAS VERSÕES
 # ------------------------------------------------------------------------------
-# COMEÇAR PARTE DE GERAR RELATORIO DE LOCAÇÃO
+#21/02/22
+# COMEÇAR PARTE DE GERAR RELATORIO DE LOCAÇÃO - OK
 # CRIAR BOTÃO LOCAÇÃO - OK
-# CRIAR TELA DE LOCAÇÃO -
-
-
+# CRIAR TELA DE LOCAÇÃO - OK
+# CRIAR ACESSO E CRIAÇÃO DE PDF - OK
+# PUXAR LISTAS DE CADASTRO PRA PDF - OK
+# ORGANIZAR TELA PDF - UTILIZANDO WIDGETS SPINNER -
+# ------------------------------------------------------------------------------
+#22/02/22
+# WIDGET JA ESTA COLOCANDO NA TELA AS PEÇAS CADASTRADAS
+# FALTA UM FORMA DE PASSAR PARA O PDF OS CADASTROS ESCOLHIDOS PELO USUÁRIO
+# FALTA ORGANIZAR O LAYOUT DO PDF E DO BOXLAYOUT DO PDF
+# DIMINUIR O TAMANHO DOS BOTÕES QUE APARECEM NO SPINNER
 
 # FAZER CADASTRO DE CLIENTES - MELHORIA
 # FAZER CADASTRO DE FORNECEDORES -
@@ -468,3 +514,6 @@ HelpDecorTest().run()
 
 
 # - Fonte Canva - Preto e Rosa Neon Casa Noturna Logotipo
+
+
+# - Utilizar esta resolução para testes python main.py -m screen:one,portrait,scale=.4
